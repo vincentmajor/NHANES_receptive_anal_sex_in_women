@@ -264,7 +264,7 @@ anal.women %>% summarize(median_age = median(RIDAGEYR),
 
 ## age by decades
 anal.women %>% 
-  mutate(age_bin = floor(RIDAGEYR/10)*10 ) %>% 
+  mutate(age_bin = floor(RIDAGEYR/10)*10 ) %>%  ## rounding down into decades, 20-29 --> 20
   count(age_bin) %>% 
   mutate(prop = n/sum(n)*100)
 # # A tibble: 6 x 3
@@ -291,3 +291,47 @@ anal.women %>%
 # 4 Other Hispanic                        733  11.1
 # 5 Other Race - Including Multi-Racial   753  11.4
 # 5 Other Race - Including Multi-Racial   753
+
+## anal sex proportions in in age decades
+anal.women %>% 
+  mutate(age_bin = floor(RIDAGEYR/10)*10 ) %>% ## rounding down into decades, 20-29 --> 20
+  count(flag.analsex, age_bin) %>% 
+  group_by(age_bin) %>% 
+  mutate(prop = n/sum(n)*100)
+# # A tibble: 12 x 4
+# # Groups:   age_bin [6]
+#   flag.analsex age_bin     n  prop
+#          <int>   <dbl> <int> <dbl>
+# 1            0      10   343  81.5
+# 2            0      20   790  61.8
+# 3            0      30   677  56.9
+# 4            0      40   826  63.3
+# 5            0      50   827  69.3
+# 6            0      60   930  76.8
+# 7            1      10    78  18.5
+# 8            1      20   488  38.2
+# 9            1      30   512  43.1
+# 10           1      40   478  36.7
+# 11           1      50   366  30.7
+# 12           1      60   281  23.2
+
+## anal sex proportions in ethnicity
+anal.women %>%
+  left_join(dict.eth1, by = c('RIDRETH1' = 'value') ) %>% 
+  count(flag.analsex, Ethnicity) %>% 
+  group_by(Ethnicity) %>% 
+  mutate(prop = n/sum(n)*100)
+# # A tibble: 10 x 4
+# # Groups:   Ethnicity [5]
+#   flag.analsex Ethnicity                               n  prop
+#          <int> <chr>                               <int> <dbl>
+# 1            0 Mexican American                      696  69.3
+# 2            0 Non-Hispanic Black                   1096  73.6
+# 3            0 Non-Hispanic White                   1550  59.3
+# 4            0 Other Hispanic                        484  66.0
+# 5            0 Other Race - Including Multi-Racial   567  75.3
+# 6            1 Mexican American                      309  30.7
+# 7            1 Non-Hispanic Black                    394  26.4
+# 8            1 Non-Hispanic White                   1065  40.7
+# 9            1 Other Hispanic                        249  34.0
+# 10           1 Other Race - Including Multi-Racial   186  24.7
